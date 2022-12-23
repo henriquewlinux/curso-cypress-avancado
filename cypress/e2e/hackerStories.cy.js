@@ -28,7 +28,7 @@ describe('Hacker Stories', () => {
 
       cy.get('.item').should('have.length', 20)
 
-      cy.contains('More').click()
+      cy.contains('More').should('be.visible').click()
 
       cy.wait('@getNextStories')
 
@@ -38,7 +38,7 @@ describe('Hacker Stories', () => {
     it('searches via the last searched term', () => {
       cy.intercept('GET', '**/search**').as('getNewTermStories')
 
-      cy.get('#search').clear().type(`${newTerm}{enter}`)
+      cy.get('#search').should('be.visible').clear().type(`${newTerm}{enter}`)
 
       cy.wait('@getNewTermStories')
 
@@ -47,7 +47,7 @@ describe('Hacker Stories', () => {
       cy.wait('@getNewTermStories')
 
       cy.get('.item').should('have.length', 20)
-      cy.get('.item').first().should('contain', initialTerm)
+      cy.get('.item').first().should('be.visible').and('contain', initialTerm)
       cy.get(`button:contains(${newTerm})`).should('be.visible')
     })
   })
@@ -73,70 +73,72 @@ describe('Hacker Stories', () => {
         it('shows the right data for all rendered stories', () => {
           cy.get('.item')
             .first()
-            .should('contain', stories.hits[0].title)
+            .should('be.visible')
+            .and('contain', stories.hits[0].title)
             .and('contain', stories.hits[0].author)
             .and('contain', stories.hits[0].points)
             .and('contain', stories.hits[0].num_comments)
-          cy.get(`.item a:contains(${stories.hits[0].title})`).should(
-            'have.attr',
-            'href',
-            stories.hits[0].url
-          )
+          cy.get(`.item a:contains(${stories.hits[0].title})`)
+            .should('be.visible')
+            .and('have.attr', 'href', stories.hits[0].url)
 
           cy.get('.item')
             .last()
-            .should('contain', stories.hits[1].title)
+            .should('be.visible')
+            .and('contain', stories.hits[1].title)
             .and('contain', stories.hits[1].author)
             .and('contain', stories.hits[1].points)
             .and('contain', stories.hits[1].num_comments)
-          cy.get(`.item a:contains(${stories.hits[1].title})`).should(
-            'have.attr',
-            'href',
-            stories.hits[1].url
-          )
+          cy.get(`.item a:contains(${stories.hits[1].title})`)
+            .should('be.visible')
+            .and('have.attr', 'href', stories.hits[1].url)
         })
 
         it('shows one less story after dimssing the first one', () => {
-          cy.get('.button-small').first().click()
+          cy.get('.button-small').first().should('be.visible').click()
 
           cy.get('.item').should('have.length', 1)
         })
         context('Order by', () => {
           it('orders by title', () => {
-            cy.get('.list-header-button:contains(Title)').click()
+            cy.get('.list-header-button:contains(Title)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
               .should('be.visible')
               .and('contain', stories.hits[0].title)
-            cy.get(`.item a:contains(${stories.hits[0].title})`).should(
-              'have.attr',
-              'href',
-              stories.hits[0].url
-            )
+            cy.get(`.item a:contains(${stories.hits[0].title})`)
+              .should('be.visible')
+              .and('have.attr', 'href', stories.hits[0].url)
 
-            cy.get('.list-header-button:contains(Title)').click()
+            cy.get('.list-header-button:contains(Title)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
               .should('be.visible')
               .and('contain', stories.hits[1].title)
-            cy.get(`.item a:contains(${stories.hits[1].title})`).should(
-              'have.attr',
-              'href',
-              stories.hits[1].url
-            )
+            cy.get(`.item a:contains(${stories.hits[1].title})`)
+              .should('be.visible')
+              .and('have.attr', 'href', stories.hits[1].url)
           })
 
           it('orders by author', () => {
-            cy.get('.list-header-button:contains(Author)').click()
+            cy.get('.list-header-button:contains(Author)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
               .should('be.visible')
               .and('contain', stories.hits[0].author)
 
-            cy.get('.list-header-button:contains(Author)').click()
+            cy.get('.list-header-button:contains(Author)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
@@ -145,14 +147,18 @@ describe('Hacker Stories', () => {
           })
 
           it('orders by comments', () => {
-            cy.get('.list-header-button:contains(Comments)').click()
+            cy.get('.list-header-button:contains(Comments)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
               .should('be.visible')
               .and('contain', stories.hits[0].num_comments)
 
-            cy.get('.list-header-button:contains(Comments)').click()
+            cy.get('.list-header-button:contains(Comments)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
@@ -161,14 +167,18 @@ describe('Hacker Stories', () => {
           })
 
           it('orders by points', () => {
-            cy.get('.list-header-button:contains(Points)').click()
+            cy.get('.list-header-button:contains(Points)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
               .should('be.visible')
               .and('contain', stories.hits[0].points)
 
-            cy.get('.list-header-button:contains(Points)').click()
+            cy.get('.list-header-button:contains(Points)')
+              .should('be.visible')
+              .click()
 
             cy.get('.item')
               .first()
@@ -194,8 +204,12 @@ describe('Hacker Stories', () => {
         cy.get('#search').clear()
       })
 
+      it('shows no story when none is returned', () => {
+        cy.get('.item').should('not.exist')
+      })
+
       it('types and hits ENTER', () => {
-        cy.get('#search').type(`${newTerm}{enter}`)
+        cy.get('#search').should('be.visible').type(`${newTerm}{enter}`)
 
         cy.wait('@getStories')
 
@@ -204,8 +218,8 @@ describe('Hacker Stories', () => {
       })
 
       it('types and clicks the submit button', () => {
-        cy.get('#search').type(newTerm)
-        cy.contains('Submit').click()
+        cy.get('#search').should('be.visible').type(newTerm)
+        cy.contains('Submit').should('be.visible').click()
 
         cy.wait('@getStories')
 
@@ -222,7 +236,7 @@ describe('Hacker Stories', () => {
       })
 
       context('Last searches', () => {
-        it('shows a max of 5 buttons for the last searched terms', () => {
+        it.only('shows a max of 5 buttons for the last searched terms', () => {
           cy.intercept('GET', '**/search**', {
             fixture: 'empty'
           }).as('getStories')
@@ -230,12 +244,17 @@ describe('Hacker Stories', () => {
           const faker = require('faker')
 
           Cypress._.times(6, () => {
-            cy.get('#search').clear().type(`${faker.random.word()}{enter}`)
+            cy.get('#search')
+              .should('be.visible')
+              .clear()
+              .type(`${faker.random.word()}{enter}`)
           })
 
           cy.wait('@getStories')
 
-          cy.get('.last-searches button').should('have.length', 5)
+          cy.get('.last-searches').within(() => {
+            cy.get('button').should('have.length', 5)
+          })
         })
       })
     })
